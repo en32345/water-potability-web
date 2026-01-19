@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Water Potability Predictor</title>
+  <style>
+    body { font-family: Arial; max-width: 720px; margin: 40px auto; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { font-size: 14px; }
+    input { width: 100%; padding: 10px; }
+    button { padding: 12px 16px; margin-top: 16px; cursor: pointer; }
+    .result { margin-top: 20px; padding: 12px; background: #f5f5f5; }
+  </style>
+</head>
+<body>
+  <h2>Prediksi Kelayakan Air Minum</h2>
+  <p>Isi semua nilai fitur (sesuai dataset water_potability).</p>
+
+  <form method="POST" action="/predict">
+    <div class="grid">
+      <div>
+        <label>ph</label>
+        <input name="ph" type="number" step="any" required>
+      </div>
+      <div>
+        <label>Hardness</label>
+        <input name="Hardness" type="number" step="any" required>
+      </div>
+
+      <div>
+        <label>Solids</label>
+        <input name="Solids" type="number" step="any" required>
+      </div>
+      <div>
+        <label>Chloramines</label>
+        <input name="Chloramines" type="number" step="any" required>
+      </div>
+
+      <div>
+        <label>Sulfate</label>
+        <input name="Sulfate" type="number" step="any" required>
+      </div>
+      <div>
+        <label>Conductivity</label>
+        <input name="Conductivity" type="number" step="any" required>
+      </div>
+
+      <div>
+        <label>Organic_carbon</label>
+        <input name="Organic_carbon" type="number" step="any" required>
+      </div>
+      <div>
+        <label>Trihalomethanes</label>
+        <input name="Trihalomethanes" type="number" step="any" required>
+      </div>
+
+      <div>
+        <label>Turbidity</label>
+        <input name="Turbidity" type="number" step="any" required>
+      </div>
+    </div>
+
+    <button type="submit">Predict</button>
+  </form>
+
+  {% if result %}
+    <div class="result"><b>Hasil:</b> {{ result }}</div>
+  {% endif %}
+</body>
+</html>
