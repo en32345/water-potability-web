@@ -114,9 +114,3 @@ if st.button("🚀 Analisis Kelayakan Sekarang", type="primary"):
         if turbidity > 5.0:
             st.warning("⚠️ **Kekeruhan Tinggi:** Air terlihat keruh (Turbidity > 5 NTU), disarankan melalui penyaringan.")
 
-# --- INFORMASI MODEL ---
-with st.expander("ℹ️ Detail Akurasi Model"):
-    st.write(f"Model: **Random Forest Classifier**")
-    st.write(f"Akurasi: **{accuracy*100:.2f}%**")
-
-    st.dataframe(raw_data.describe())
