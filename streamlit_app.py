@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 # --- KONFIGURASI HALAMAN ---
-st.set_page_config(page_title="Prediksi Kelayakan Air", layout="wide")
+st.set_page_config(page_title="💧 Prediksi Kelayakan Air", layout="wide")
 
 # Custom CSS untuk memperindah UI
 st.markdown("""
@@ -118,4 +118,5 @@ if st.button("🚀 Analisis Kelayakan Sekarang", type="primary"):
 with st.expander("ℹ️ Detail Akurasi Model"):
     st.write(f"Model: **Random Forest Classifier**")
     st.write(f"Akurasi: **{accuracy*100:.2f}%**")
+
     st.dataframe(raw_data.describe())
