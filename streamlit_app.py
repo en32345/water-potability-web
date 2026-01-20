@@ -4,30 +4,18 @@ import numpy as np
 import time
 
 # --- KONFIGURASI HALAMAN ---
-st.set_page_config(
-    page_title="Water Quality Analyzer",
-    page_icon="💧",
-    layout="centered"
-)
+st.set_page_config(page_title="Prediksi Kualitas Air", page_icon="💧")
 
-# --- STYLE CSS (Agar lebih menarik) ---
+# --- STYLE DESAIN (CSS) ---
 st.markdown("""
     <style>
-    .main { background-color: #f8f9fa; }
+    .main { background-color: #f5f7f9; }
     .stButton>button {
         width: 100%;
         border-radius: 10px;
         background-color: #007bff;
         color: white;
-        height: 3em;
         font-weight: bold;
-    }
-    .result-box {
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 20px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -35,7 +23,7 @@ st.markdown("""
 # --- LOAD MODEL & SCALER ---
 @st.cache_resource
 def load_model():
-    # Pastikan nama file ini sama dengan yang ada di GitHub kamu
+    # Membuka file model yang Anda upload ke GitHub
     with open("model_air.pkl", "rb") as f:
         model = pickle.load(f)
     with open("scaler_air.pkl", "rb") as f:
@@ -45,56 +33,42 @@ def load_model():
 try:
     model, scaler = load_model()
 except Exception as e:
-    st.error(f"Gagal memuat model/scaler: {e}")
+    st.error(f"Error: File model tidak ditemukan di GitHub. Pastikan 'model_air.pkl' sudah diupload. Detail: {e}")
 
-# --- HEADER ---
-st.title("🌊 Sistem Prediksi Kelayakan Air")
-st.write("Gunakan alat ini untuk menganalisis apakah air aman untuk dikonsumsi berdasarkan parameter laboratorium.")
-st.markdown("---")
+# --- TAMPILAN ---
+st.title("🌊 Water Quality Analyzer")
+st.write("Masukkan parameter air untuk mengetahui kelayakan minum.")
 
-# --- INPUT PARAMETER ---
-st.subheader("🧪 Input Parameter Air")
-with st.container():
+with st.form("input_form"):
     col1, col2 = st.columns(2)
-    
     with col1:
-        ph = st.number_input("pH (0-14)", value=7.0, step=0.1)
-        hardness = st.number_input("Hardness (mg/L)", value=150.0)
-        solids = st.number_input("Solids (ppm/TDS)", value=20000.0)
-        chloramines = st.number_input("Chloramines (ppm)", value=7.0)
-        sulfate = st.number_input("Sulfate (mg/L)", value=300.0)
-
+        ph = st.number_input("pH (0-14)", value=7.0)
+        Hardness = st.number_input("Hardness", value=200.0)
+        Solids = st.number_input("Solids", value=20000.0)
+        Chloramines = st.number_input("Chloramines", value=7.0)
     with col2:
-        conductivity = st.number_input("Conductivity (μS/cm)", value=400.0)
-        organic_carbon = st.number_input("Organic Carbon (ppm)", value=15.0)
-        trihalomethanes = st.number_input("Trihalomethanes (μg/L)", value=60.0)
-        turbidity = st.number_input("Turbidity (NTU)", value=4.0)
+        Sulfate = st.number_input("Sulfate", value=300.0)
+        Conductivity = st.number_input("Conductivity", value=400.0)
+        Organic_carbon = st.number_input("Organic carbon", value=15.0)
+        Trihalomethanes = st.number_input("Trihalomethanes", value=60.0)
+    
+    Turbidity = st.number_input("Turbidity", value=4.0)
+    submitted = st.form_submit_button("PREDIKSI SEKARANG")
 
-# --- TOMBOL PREDIKSI ---
-st.write("")
-if st.button("ANALISIS SEKARANG"):
-    with st.spinner('Sistem sedang melakukan pengecekan...'):
-        time.sleep(1.2) # Efek simulasi analisis AI
+if submitted:
+    with st.spinner("Menganalisis data..."):
+        time.sleep(1)
+        # Susun data sesuai urutan fitur saat training
+        data = np.array([[ph, Hardness, Solids, Chloramines, Sulfate, 
+                          Conductivity, Organic_carbon, Trihalomethanes, Turbidity]])
         
-        # Urutan harus sama dengan: ph, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity
-        input_data = np.array([[ph, hardness, solids, chloramines, sulfate, 
-                                conductivity, organic_carbon, trihalomethanes, turbidity]])
+        # Lakukan Scaling dan Prediksi
+        data_scaled = scaler.transform(data)
+        prediction = model.predict(data_scaled)[0]
         
-        # Transformasi dengan Scaler
-        input_scaled = scaler.transform(input_data)
-        
-        # Prediksi
-        prediction = model.predict(input_scaled)[0]
-
-        # --- TAMPILAN HASIL ---
-        st.markdown("### 📊 Hasil Analisis:")
+        st.markdown("---")
         if prediction == 1:
             st.balloons()
-            st.success("### ✅ LAYAK MINUM (Potable)")
-            st.info("Air memenuhi kriteria kualitas untuk dikonsumsi berdasarkan data yang dimasukkan.")
+            st.success("### ✅ HASIL: AIR LAYAK MINUM (Potable)")
         else:
-            st.error("### ❌ TIDAK LAYAK MINUM (Not Potable)")
-            st.warning("Peringatan: Kandungan air berisiko bagi kesehatan. Perlu proses filtrasi atau pengolahan lebih lanjut.")
-
-# --- FOOTER ---
-st.markdown("---")
+            st.error("### ❌ HASIL: AIR TIDAK LAYAK (Not Potable)")
